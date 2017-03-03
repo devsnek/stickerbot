@@ -1,6 +1,7 @@
 const sharp = require('sharp');
 const AWS = require('aws-sdk');
 const config = require('../config');
+const AdmZip = require('adm-zip');
 
 // Set credentials and region
 const s3 = new AWS.S3({
@@ -18,7 +19,7 @@ class Util {
     throw new Error(`plz do not instantiate this class :P`);
   }
 
-  static s3upload(pack, name, stream) {
+  static upload(pack, name, stream) {
     return new Promise((resolve, reject) => {
       s3.upload({
         Bucket: 'discord-stickers',
@@ -32,16 +33,24 @@ class Util {
     });
   }
 
-  static resizeImage(buffer) {
+  static resize(buffer) {
     return new Promise((resolve, reject) => {
       sharp(buffer)
         .resize(120, 120)
         .min()
         .toFormat('png')
-        .toBuffer((err, buff, info) => {
-          if (err) reject(info);
+        .toBuffer((err, buff) => {
+          if (err) reject(err);
           else resolve(buff);
         });
+    });
+  }
+
+  static inflate(buffer) {
+    return new Promise((resolve, reject) => {
+      const zip = new AdmZip(buffer);
+      if (zip.getEntries) resolve(zip);
+      else reject(zip);
     });
   }
 
