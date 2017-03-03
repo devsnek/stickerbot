@@ -38,7 +38,10 @@ class Util {
       sharp(buffer)
         .resize(120, 120)
         .min()
-        .toFormat('png')
+        .png({
+          progressive: true,
+          compressionLevel: 5,
+        })
         .toBuffer((err, buff) => {
           if (err) reject(err);
           else resolve(buff);
