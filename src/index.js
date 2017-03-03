@@ -36,20 +36,21 @@ const commands = {
   },
   get: (message, content) => {
     const match = /^(.+)\/(.+)/i.exec(content);
+    if (!match) return;
     const pack = match[1];
     const sticker = match[2];
     const url = `${config.s3url}/${pack}/${sticker}.png`;
     message.delete().catch(Util.noop);
-    message.channel.sendFile(url, `${pack}-${sticker}.png`).catch(e => console.error(e.message, e.status));
+    message.channel.sendFile(url, `${pack}-${sticker}.png`).catch(e => console.error(url, e.message, e.status));
     return;
   },
 };
 
 client.on('message', (message) => {
   if (!message.content.startsWith('s!')) return;
-  const content = message.cleanContent.replace('s!', '').toLowerCase().trim();
-  if (content.startsWith('put')) {
-    commands.upload(message, content.replace(/^put/, '').trim());
+  const content = message.cleanContent.replace('s!', '').trim();
+  if (content.startsWith('put') || content.startsWith('add')) {
+    commands.upload(message, content.replace(/^put|^add/, '').trim());
     return;
   } else {
     commands.get(message, content);
