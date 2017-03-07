@@ -1,10 +1,10 @@
-const Discord = require('discord.js');
+const { Client } = require('discord.js');
 const config = require('../config');
 const superagent = require('superagent');
 const Util = require('./Util');
 const Storage = require('./Storage');
 
-const client = new Discord.Client();
+const client = new Client();
 
 const commands = {
   uploadSingle: (message, content) => {
